@@ -39,7 +39,7 @@ router.post("/", (req, res) => {
       authenticateUser(req.body.password, user.password).then((isValid) => {
         if (!isValid) return res.status(400).send("Invalid email or password");
 
-        res.send(user.generateAuthToken());
+        res.send({ jwt: user.generateAuthToken() });
       });
     })
     .catch((err) => {

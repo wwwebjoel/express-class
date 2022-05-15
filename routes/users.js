@@ -40,9 +40,11 @@ router.post("/", (req, res) => {
   User.findOne({ email: req.body.email }).then((user) => {
     if (user) return res.status(400).send("Please use another email.");
   });
-  createUser(req.body).then((newUser) =>
-    res.send(_.pick(newUser, ["_id", "name", "email", "dateOfBirth"]))
-  );
+  createUser(req.body).then((newUser) => {
+    const token = newUser.generateAuthToken();
+    const response = _.pick(newUser, ["_id", "name", "email", "dateOfBirth"]);
+    res.send({ ...response, jwt: token });
+  });
 });
 
 const logServerErrorAndRespond = (
