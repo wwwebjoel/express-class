@@ -3,14 +3,15 @@ const jwt = require("jsonwebtoken");
 function auth(req, res, next) {
   const token = req.headers["x-authentication-token"];
 
-  if (!token) return res.status(401).send("No token provided.");
+  if (!token)
+    return res.status(401).send("Please log in to perform this task.");
 
   try {
     const verifiedUser = jwt.verify(token, "jwtSecretKey");
     req.user = verifiedUser;
     next();
   } catch (e) {
-    res.status(400).send("Token is not valid.");
+    res.status(400).send("Please log in again with valid credentials.");
   }
 }
 
