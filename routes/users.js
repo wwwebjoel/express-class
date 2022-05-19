@@ -10,7 +10,7 @@ const { User, validate } = require("../models/user");
 
 const getUsers = async () => {
   return await User.find()
-    .select(["_id", "name", "email", "dateOfBirth"])
+    .select(["_id", "name", "email", "dateOfBirth", "isAdmin"])
     .sort("name");
 };
 
@@ -19,7 +19,7 @@ const createUser = async (user) => {
   return await new User(user).save();
 };
 
-router.get("/", [auth, mail, admin], async (req, res) => {
+router.get("/", async (req, res) => {
   getUsers()
     .then((User) => res.status(200).send(User))
     .catch((err) =>
@@ -44,6 +44,17 @@ router.post("/", (req, res) => {
     const token = newUser.generateAuthToken();
     const response = _.pick(newUser, ["_id", "name", "email", "dateOfBirth"]);
     res.send({ ...response, jwt: token });
+  });
+});
+
+router.put("/admin/:id", (req, res) => {
+  const userId = req.params.id;
+  User.findByIdAndUpdate(userId, { isAdmin: true }, function (err, docs) {
+    if (err) {
+      res.send("Error");
+    } else {
+      res.send("Done");
+    }
   });
 });
 
